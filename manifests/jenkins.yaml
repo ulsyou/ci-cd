@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  labels:
+    app: jenkins
+spec:
+  selector:
+    matchLabels:
+      app: jenkins
+      tier: jenkins
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: jenkins
+        tier: jenkins
+    spec:
+      serviceAccountName: jenkins
+      securityContext:
+        fsGroup: 0
+      containers:
+      - name: jenkins
+        image: 192.168.49.2:30400/jenkins:latest
+        imagePullPolicy: Always
+        env:
+        - name: DOCKER_HOST
+          value: tcp://localhost:2375
+        volumeMounts:
+        - name: jenkins-persistent-storage
+          mountPath: /var/jenkins_home
+        ports:
+        - containerPort: 8080
+          name: jenkins
+        securityContext:
+          runAsUser: 0
+      - name: dind
+        image: docker:dind
+        securityContext:
+          privileged: true
+        args:
+        - dockerd
+        - --host=tcp://0.0.0.0:2375
+        - --tls=false
+        - --insecure-registry=192.168.49.2:30400
+        env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
+        volumeMounts:
+        - name: docker-storage
+          mountPath: /var/lib/docker
+      volumes:
+      - name: jenkins-persistent-storage
+        persistentVolumeClaim:
+          claimName: jenkins-claim
+      - name: docker-storage
+        emptyDir: {}
