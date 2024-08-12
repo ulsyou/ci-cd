@@ -53,18 +53,18 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
- name: monitor-scale
- annotations:
-  ingress.kubernetes.io/rewrite-target: /
+  name: monitor-scale
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
 spec:
-  backend:
-    serviceName: monitor-scale
-    servicePort: 3001
   rules:
   - host: monitor-scale.192.168.99.108.xip.io
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: monitor-scale
-          servicePort: 3001
+          service:
+            name: monitor-scale
+            port:
+              number: 3001
