@@ -22,6 +22,9 @@ metadata:
   labels:
     app: monitor-scale
 spec:
+  selector:
+    labels:
+      app: monitor-scale
   strategy:
     type: Recreate
   template:
@@ -47,7 +50,7 @@ spec:
 
 ---
 
-apiVersion: apps/v1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
  name: monitor-scale
