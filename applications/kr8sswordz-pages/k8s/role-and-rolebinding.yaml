@@ -5,9 +5,16 @@ metadata:
   namespace: default
   name: kr8sswordz-role
 rules:
-- apiGroups: ["", "apps", "extensions"]
-  resources: ["pods", "services", "deployments", "deployments/scale"]
+- apiGroups: [""]
+  resources: ["pods", "services"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["autoscaling"]
+  resources: ["deployments/scale"]
+  verbs: ["get", "list", "watch", "update"]
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
