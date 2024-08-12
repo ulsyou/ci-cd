@@ -35,7 +35,7 @@ spec:
     spec:
       serviceAccountName: monitor-scale
       containers:
-      - image: 192.168.49.2:30400/monitor-scale:$BUILD_TAG
+      - image: 192.168.49.2:30400/monitor-scale:latest
         name: monitor-scale
         imagePullPolicy: Always
         ports:
