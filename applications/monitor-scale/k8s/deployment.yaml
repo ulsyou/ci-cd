@@ -15,7 +15,7 @@ spec:
 
 ---
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: monitor-scale
@@ -32,7 +32,7 @@ spec:
     spec:
       serviceAccountName: monitor-scale
       containers:
-      - image: 127.0.0.1:30400/monitor-scale:$BUILD_TAG
+      - image: 192.168.49.2:30400/monitor-scale:$BUILD_TAG
         name: monitor-scale
         imagePullPolicy: Always
         ports:
@@ -47,7 +47,7 @@ spec:
 
 ---
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Ingress
 metadata:
  name: monitor-scale
