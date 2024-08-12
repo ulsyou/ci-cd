@@ -1,0 +1,24 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: kr8sswordz-role
+rules:
+- apiGroups: ["", "apps", "extensions"]
+  resources: ["pods", "services", "deployments", "deployments/scale"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kr8sswordz-rolebinding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: kr8sswordz-sa
+  namespace: default
+roleRef:
+  kind: Role
+  name: kr8sswordz-role
+  apiGroup: rbac.authorization.k8s.io
