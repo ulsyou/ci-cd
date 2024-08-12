@@ -40,16 +40,17 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
- name: kr8sswordz
+  name: kr8sswordz
 spec:
-  backend:
-    serviceName: kr8sswordz
-    servicePort: 80
   rules:
   - host: kr8sswordz.192.168.99.108.xip.io
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: kr8sswordz
-          servicePort: 80
+          service:
+            name: kr8sswordz
+            port:
+              number: 80
+
