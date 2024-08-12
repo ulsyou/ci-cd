@@ -124,16 +124,25 @@ app.get('/hit/:podId', function (req, res) {
 });
 
 app.get('/pods', function (req, res) {
-  var pods = etcd.getSync("pod-list",{ recursive: true });
-  
-  let podNodes = [];
-  if (pods && pods.body && pods.body.node && pods.body.node.nodes) {
-    podNodes = pods.body.node.nodes;
-  }
+  try {
+    var pods = etcd.getSync("pod-list",{ recursive: true });
+    console.log('Pods data:', JSON.stringify(pods, null, 2)); // Logging dữ liệu trả về
 
-  res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify({ pods: podNodes }));
+    let podNodes = [];
+    if (pods && pods.body && pods.body.node && pods.body.node.nodes) {
+      podNodes = pods.body.node.nodes;
+    } else {
+      console.error('Invalid pods structure:', pods);
+    }
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ pods: podNodes }));
+  } catch (error) {
+    console.error('Error fetching pods:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
+
 
 
 app.delete('/pods', function (req, res) {
