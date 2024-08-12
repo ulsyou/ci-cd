@@ -2,8 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: etcd
-  labels:
-    app: etcd
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -15,47 +14,30 @@ spec:
         app: etcd
     spec:
       containers:
-        - name: etcd
-          image: gcr.io/etcd-development/etcd:v3.5.15
-          command:
-            - /usr/local/bin/etcd
-            - --name=s1
-            - --data-dir=/etcd-data
-            - --listen-client-urls=http://0.0.0.0:2379
-            - --advertise-client-urls=http://0.0.0.0:2379
-            - --listen-peer-urls=http://0.0.0.0:2380
-            - --initial-advertise-peer-urls=http://0.0.0.0:2380
-            - --initial-cluster=s1=http://0.0.0.0:2380
-            - --initial-cluster-token=tkn
-            - --initial-cluster-state=new
-            - --log-level=info
-            - --logger=zap
-            - --log-outputs=stderr
-          ports:
-            - name: client-port
-              containerPort: 2379
-            - name: peer-port
-              containerPort: 2380
-          volumeMounts:
-            - name: etcd-data
-              mountPath: /etcd-data
+      - name: etcd
+        image: gcr.io/etcd-development/etcd:v3.5.15
+        command:
+        - /usr/local/bin/etcd
+        - --name=s1
+        - --data-dir=/etcd-data
+        - --listen-client-urls=http://192.168.49.2:2379
+        - --advertise-client-urls=http://192.168.49.2:2379
+        - --listen-peer-urls=http://192.168.49.2:2380
+        - --initial-advertise-peer-urls=http://192.168.49.2:2380
+        - --initial-cluster=s1=http://192.168.49.2:2380
+        - --initial-cluster-token=tkn
+        - --initial-cluster-state=new
+        - --log-level=info
+        - --logger=zap
+        - --log-outputs=stderr
+        ports:
+        - containerPort: 2379
+          name: client-port
+        - containerPort: 2380
+          name: peer-port
+        volumeMounts:
+        - mountPath: /etcd-data
+          name: etcd-data
       volumes:
-        - name: etcd-data
-          emptyDir: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: etcd-service
-spec:
-  ports:
-    - name: client-port
-      port: 2379
-      targetPort: 2379
-      protocol: TCP
-    - name: peer-port
-      port: 2380
-      targetPort: 2380
-      protocol: TCP
-  selector:
-    app: etcd
+      - name: etcd-data
+        emptyDir: {}
