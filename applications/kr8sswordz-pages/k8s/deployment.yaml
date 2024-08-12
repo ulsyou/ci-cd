@@ -21,8 +21,11 @@ metadata:
   labels:
     app: kr8sswordz
 spec:
-  strategy:
-    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kr8sswordz
+      tier: kr8sswordz
   template:
     metadata:
       labels:
@@ -36,6 +39,7 @@ spec:
         ports:
         - containerPort: 3002
           name: kr8sswordz
+
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
