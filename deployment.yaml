@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+apiVersion: etcd.improbable.io/v1aplha1
 kind: Deployment
 metadata:
   name: etcd-operator
