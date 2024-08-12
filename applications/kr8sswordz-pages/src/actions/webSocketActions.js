@@ -12,7 +12,7 @@ export function getPods() {
         if (!resp.ok) {
           throw new Error(`HTTP error! status: ${resp.status}`);
         }
-        return resp.text(); // Change this line from resp.json() to resp.text()
+        return resp.text();
       })
       .then(text => {
         try {
