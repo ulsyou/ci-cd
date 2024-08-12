@@ -1,12 +1,9 @@
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: etcd-operator
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      name: etcd-operator
   template:
     metadata:
       labels:
@@ -14,7 +11,7 @@ spec:
     spec:
       containers:
       - name: etcd-operator
-        image: bitnami/etcd-operator:1.0.1
+        image: quay.io/coreos/etcd-operator:v0.9.4
         command:
         - etcd-operator
         # Uncomment to act for resources in all namespaces. More information in doc/user/clusterwide.md
