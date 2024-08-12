@@ -23,7 +23,7 @@ metadata:
     app: monitor-scale
 spec:
   selector:
-    labels:
+    matchLabels:
       app: monitor-scale
   strategy:
     type: Recreate
