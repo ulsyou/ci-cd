@@ -18,11 +18,11 @@ kubectl exec -it example-etcd-cluster-0000 cat /mkd.sh
 
 # TAG=latest
 
-# docker build -t 127.0.0.1:30400/kubescale:$TAG -f 
+# docker build -t 192.168.49.2:30400/kubescale:$TAG -f 
 
 # # echo "building set image"
 
-# cd set; docker build -t 127.0.0.1:30400/set:$TAG -f set/Dockerfile .
+# cd set; docker build -t 192.168.49.2:30400/set:$TAG -f set/Dockerfile .
 
 
 # echo "forwarding registry port"
@@ -35,12 +35,12 @@ kubectl exec -it example-etcd-cluster-0000 cat /mkd.sh
 # sleep 5
 
 # echo "pushing kubescale image"
-# docker push 127.0.0.1:30400/kubescale:latest
-# docker push 127.0.0.1:30400/set:latest
+# docker push 192.168.49.2:30400/kubescale:latest
+# docker push 192.168.49.2:30400/set:latest
 
 # echo "pushing set image"
 
-# docker push 127.0.0.1:30400/set:latest
+# docker push 192.168.49.2:30400/set:latest
 
 # sleep 2
 # echo "killing port-forward"
