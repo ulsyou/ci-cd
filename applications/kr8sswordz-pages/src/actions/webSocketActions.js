@@ -3,17 +3,30 @@ import constants from '../constants';
 import * as types from './actionTypes';
 
 const baseUrl = `http://monitor-scale.${constants.minikubeIp}.xip.io`;
-const socket = io(baseUrl, { transports: ['websocket'] }); // Thêm tùy chọn transports
+const socket = io(baseUrl, { transports: ['websocket'] });
 
-export function getPods () {
+export function getPods() {
   return dispatch => {
     return fetch(`${baseUrl}/pods`)
-      .then(resp => resp.json())
-      .then(json => {
-        const pods = json.pods.map(pod => concatServiceName(pod.key));
-        dispatch({ type: types.websocket.GET_PODS, pods });
+      .then(resp => {
+        if (!resp.ok) {
+          throw new Error(`HTTP error! status: ${resp.status}`);
+        }
+        return resp.text(); // Change this line from resp.json() to resp.text()
+      })
+      .then(text => {
+        try {
+          const json = JSON.parse(text); 
+          const pods = json.pods.map(pod => concatServiceName(pod.key));
+          dispatch({ type: types.websocket.GET_PODS, pods });
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+          console.log('Received text:', text);
+          throw error;
+        }
       })
       .catch(err => {
+        console.error('Error fetching pods:', err);
         throw err;
       });
   };
