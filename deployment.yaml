@@ -1,30 +1,57 @@
-apiVersion: etcd.improbable.io/v1aplha1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: etcd-operator
+  name: etcd
+  labels:
+    app: etcd
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: etcd-operator
+      app: etcd
   template:
     metadata:
       labels:
-        name: etcd-operator
+        app: etcd
     spec:
       containers:
-      - name: etcd-operator
-        image: quay.io/coreos/etcd-operator:v0.9.4
-        command:
-        - etcd-operator
-        # Uncomment to act for resources in all namespaces. More information in doc/user/clusterwide.md
-        #- -cluster-wide
-        env:
-        - name: MY_POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: MY_POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
+        - name: etcd
+          image: gcr.io/etcd-development/etcd:v3.5.15
+          command:
+            - /usr/local/bin/etcd
+            - --name=s1
+            - --data-dir=/etcd-data
+            - --listen-client-urls=http://0.0.0.0:2379
+            - --advertise-client-urls=http://0.0.0.0:2379
+            - --listen-peer-urls=http://0.0.0.0:2380
+            - --initial-advertise-peer-urls=http://0.0.0.0:2380
+            - --initial-cluster=s1=http://0.0.0.0:2380
+            - --initial-cluster-token=tkn
+            - --initial-cluster-state=new
+            - --log-level=info
+            - --logger=zap
+            - --log-outputs=stderr
+          ports:
+            - containerPort: 2379
+            - containerPort: 2380
+          volumeMounts:
+            - name: etcd-data
+              mountPath: /etcd-data
+      volumes:
+        - name: etcd-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd-service
+spec:
+  ports:
+    - port: 2379
+      targetPort: 2379
+      protocol: TCP
+    - port: 2380
+      targetPort: 2380
+      protocol: TCP
+  selector:
+    app: etcd
