@@ -32,7 +32,6 @@ spec:
         app: kr8sswordz
         tier: kr8sswordz
     spec:
-      serviceAccountName: kr8sswordz-sa
       containers:
       - image: 192.168.49.2:30400/kr8sswordz:$BUILD_TAG
         name: kr8sswordz
