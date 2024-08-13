@@ -7,48 +7,43 @@ var io = require('socket.io')(http);
 var path = require("path");
 var Etcd = require('node-etcd');
 var cors = require('cors');
-
-app.use(express.static('public'));
-
 var bodyParser = require("body-parser");
 
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
 
 etcd = new Etcd("http://example-etcd-cluster-client-service:2379");
 etcd.mkdirSync('pod-list');
 
-var watcher = etcd.watcher("pod-list", null, {recursive: true});
-watcher.on("change", function(val) {
-
-  var podChange = { pods: val.node.key, action: val.action };
-  console.log(JSON.stringify(podChange));
-  io.emit('pods', podChange);
-});
-
 app.post('/scale', function (req, res) {
   var scale = req.body.count;
   console.log('Count requested is: %s', scale);
-  var url = "http://127.0.0.1:2345/apis/extensions/v1beta1/namespaces/default/deployments/puzzle/scale";
+  var url = "http://192.168.49.2:2345/apis/extensions/v1/namespaces/default/deployments/puzzle/scale";
   var putBody = {
-    kind:"Scale",
-    apiVersion:"extensions/v1beta1",
+    kind: "Scale",
+    apiVersion: "apps/v1",
     metadata: { 
-      name:"puzzle",
-      namespace:"default"
+      name: "puzzle",
+      namespace: "default"
     },
     spec: {
-      replicas:1
+      replicas: 1
     },
-    status:{}
+    status: {}
   };
   putBody.spec.replicas = scale;
 
   request({ url: url, method: 'PUT', json: putBody}, function (err, httpResponse, body) {
     if (err) {
       console.error('Failed to scale:', err);
-      next(err);
+      return res.status(500).send('Failed to scale');
     }
     console.log('Response: ' + JSON.stringify(httpResponse));
     res.status(httpResponse.statusCode).json(body);
@@ -56,7 +51,6 @@ app.post('/scale', function (req, res) {
 });
 
 app.post('/loadtest/concurrent', function (req, res) {
-
   var count = req.body.count;
   console.log('Count requested is: %s', count);
   var url = "http://puzzle:3000/puzzle/v1/crossword";
@@ -79,13 +73,11 @@ app.post('/loadtest/concurrent', function (req, res) {
 });
 
 app.post('/loadtest/consecutive', function (req, res) {
-  
   var count = req.body.count;
   var url = "http://puzzle:3000/puzzle/v1/crossword";
   var callArray = [];
 
   for (var i = 0; i < req.body.count; i++) {
-    
     callArray.push(function (cb) {
       setTimeout(function () {
         request(url, function(error, response, html) {
@@ -114,7 +106,6 @@ app.get('/down/:podId', function (req, res) {
 });
 
 app.get('/hit/:podId', function (req, res) {
-
   var d = new Date();
   var n = d.getTime();
 
@@ -125,8 +116,8 @@ app.get('/hit/:podId', function (req, res) {
 
 app.get('/pods', function (req, res) {
   try {
-    var pods = etcd.getSync("pod-list",{ recursive: true });
-    console.log('Pods data:', JSON.stringify(pods, null, 2)); // Logging dữ liệu trả về
+    var pods = etcd.getSync("pod-list", { recursive: true });
+    console.log('Pods data:', JSON.stringify(pods, null, 2)); 
 
     let podNodes = [];
     if (pods && pods.body && pods.body.node && pods.body.node.nodes) {
@@ -143,27 +134,23 @@ app.get('/pods', function (req, res) {
   }
 });
 
-
-
 app.delete('/pods', function (req, res) {
-
-  var pods = etcd.delSync("pod-list/",{ recursive: true });
+  var pods = etcd.delSync("pod-list/", { recursive: true });
   res.send('pods deleted')
 });
 
 io.on('connection', function(socket){
-  
   console.log("Websocket connection established.");
   socket.on('disconnect', function() {
     console.log("Websocket disconnect.");
   })
 });
 
-app.get('/', function(req,res){
+app.get('/', function(req, res){
   res.send('basic GET successful');
 });
 
+// Khởi động server
 http.listen(3001, function () {
   console.log('Listening on port 3001!');
 });
-
