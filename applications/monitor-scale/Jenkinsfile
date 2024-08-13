@@ -22,7 +22,6 @@ node {
     }
 
     stage("Deploy") {
-        // Sử dụng kubectl apply để deploy thay vì kubernetesDeploy
         sh "kubectl apply -f applications/${appName}/k8s/"
     }
 }
