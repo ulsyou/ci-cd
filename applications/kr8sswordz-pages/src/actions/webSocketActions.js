@@ -43,7 +43,7 @@ export function connectToSocket () {
     });
 
     socket.on('pods', (data) => {
-      console.log('Received pods data:', data); // Thêm log để kiểm tra dữ liệu nhận được
+      console.log('Received pods data:', data); 
 
       if (data && data.pods) {
         const pods = data.pods.map(pod => concatServiceName(pod));
@@ -62,7 +62,7 @@ export function connectToSocket () {
     });
 
     socket.on('hit', (data) => {
-      console.log('Received hit data:', data); // Thêm log để kiểm tra dữ liệu nhận được
+      console.log('Received hit data:', data);
 
       if (data && data.podId) {
         const activeInstance = concatServiceName(data.podId);
