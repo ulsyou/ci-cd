@@ -25,31 +25,30 @@ etcd.mkdirSync('pod-list');
 app.post('/scale', function (req, res) {
   var scale = req.body.count;
   console.log('Count requested is: %s', scale);
-  var url = "http://127.0.0.1:2345/apis/extensions/v1beta1/namespaces/default/deployments/puzzle/scale";
+  var url = "http://192.168.49.2:2345/apis/apps/v1/namespaces/default/deployments/puzzle/scale";
   var putBody = {
-    kind:"Scale",
-    apiVersion:"extensions/v1beta1",
+    kind: "Scale",
+    apiVersion: "apps/v1",
     metadata: { 
-      name:"puzzle",
-      namespace:"default"
+      name: "puzzle",
+      namespace: "default"
     },
     spec: {
-      replicas:1
+      replicas: 1
     },
-    status:{}
+    status: {}
   };
   putBody.spec.replicas = scale;
 
   request({ url: url, method: 'PUT', json: putBody}, function (err, httpResponse, body) {
     if (err) {
       console.error('Failed to scale:', err);
-      next(err);
+      return res.status(500).send('Failed to scale');
     }
     console.log('Response: ' + JSON.stringify(httpResponse));
     res.status(httpResponse.statusCode).json(body);
   });
 });
-
 
 app.post('/loadtest/concurrent', function (req, res) {
   var count = req.body.count;
