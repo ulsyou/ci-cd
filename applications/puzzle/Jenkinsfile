@@ -18,6 +18,10 @@ node {
     }
     
     stage("Deploy") {
-        sh "kubectl apply -f applications/${appName}/k8s/"
+        sh "envsubst < applications/${appName}/k8s/deployment.yaml > temp_deployment.yaml"
+        sh "kubectl apply -f temp_deployment.yaml
+        sh "kubectl apply -f applications/${appName}/k8s/service.yaml"
+        sh "kubectl apply -f applications/${appName}/k8s/ingress.yaml"
+        sh "rm temp_deployment.yaml"
     }
 }
