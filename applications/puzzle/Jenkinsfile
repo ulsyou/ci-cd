@@ -22,7 +22,6 @@ node {
     }
     stage("Deploy") {
         echo "Build tag is: ${BUILD_TAG}"
-        sh "kubectl apply -f -"
         sh "sed s#192.168.49.2:30400/puzzle:$BUILD_TAG#192.168.49.2:30400/puzzle:${tag}# applications/puzzle/k8s/deployment.yaml | kubectl apply -f -"
     }
 }
