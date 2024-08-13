@@ -100,22 +100,24 @@ export function scale (data) {
     headers.append('Content-Type', 'application/json');
 
     return fetch(`${baseUrl}/scale`, {
-      method: 'POST',
-      headers,
-      body: submission
-    })
-    .then(resp => {
-      if (!resp.ok) {
-        throw new Error(`HTTP error! status: ${resp.status}`);
-      }
-      return resp.json();
-    })
-    .catch(err => {
-      console.error('Error scaling pods:', err);
-      throw err;
+  method: 'POST',
+  headers,
+  body: submission
+})
+.then(resp => {
+  if (!resp.ok) {
+    return resp.text().then(text => {
+      console.error(`Error response text: ${text}`);
+      throw new Error(`HTTP error! status: ${resp.status}`);
     });
-  };
-}
+  }
+  return resp.json();
+})
+.catch(err => {
+  console.error('Error scaling pods:', err);
+  throw err;
+});
+
 
 export function submitConcurrentRequests (count) {
   return dispatch => {
