@@ -3,7 +3,8 @@ import constants from '../constants';
 import * as types from './actionTypes';
 
 const baseUrl = `http://monitor-scale.${constants.minikubeIp}.xip.io`;
-const socket = io(baseUrl, { transports: ['websocket'] });
+const socket = io(baseUrl, { transports: ['websocket'], secure: false });
+
 
 export function getPods() {
   return dispatch => {
