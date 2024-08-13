@@ -21,7 +21,9 @@ node {
         sh "docker push ${imageName}"
     }
     stage("Deploy") {
-        echo "Build tag is: ${BUILD_TAG}"
-        sh "sed s#192.168.49.2:30400/puzzle:$BUILD_TAG#192.168.49.2:30400/puzzle:${tag}# applications/puzzle/k8s/deployment.yaml | kubectl apply -f -"
+      echo "Build tag is: ${BUILD_TAG}"
+      sh "sed 's#\\\$BUILD_TAG#${tag}#' applications/puzzle/k8s/deployment.yaml > output.yaml"
+      sh "cat output.yaml"
+      sh "kubectl apply -f output.yaml"
     }
 }
