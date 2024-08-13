@@ -1,21 +1,25 @@
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+apiVersion: v1
+kind: ServiceAccount
 metadata:
-  name: api-access
-rules:
-- apiGroups: [""]
-  resources: ["pods", "services", "deployments"]
-  verbs: ["get", "list", "watch"]
+  name: monitor-scale-sa
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: Role
 metadata:
-  name: default-api-access
+  name: monitor-scale-role
+rules:
+- apiGroups: ["", "apps", "autoscaling"]
+  resources: ["pods", "services", "deployments", "replicasets", "horizontalpodautoscalers"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: monitor-scale-rolebinding
 subjects:
 - kind: ServiceAccount
-  name: default
-  namespace: default
+  name: monitor-scale-sa
 roleRef:
-  kind: ClusterRole
-  name: api-access
+  kind: Role
+  name: monitor-scale-role
   apiGroup: rbac.authorization.k8s.io
