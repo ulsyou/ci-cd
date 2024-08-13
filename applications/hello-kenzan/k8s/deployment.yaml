@@ -34,7 +34,7 @@ spec:
         tier: hello-kenzan
     spec:
       containers:
-      - image: 192.168.49.2:30400/hello-kenzan:latest
+      - image: 127.0.0.1:30400/hello-kenzan:latest
         name: hello-kenzan
         ports:
         - containerPort: 80
