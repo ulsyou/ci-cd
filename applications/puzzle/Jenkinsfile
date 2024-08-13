@@ -13,15 +13,16 @@ node {
     env.BUILDIMG=imageName
     env.BUILD_TAG=tag
 
-    stage "Build"
-
+    stage("Build") {
         sh "docker build -t ${imageName} applications/puzzle"
+    }
 
-    stage "Push"
-
+    stage("Push") {
         sh "docker push ${imageName}"
+    }
 
-    stage "Deploy"
-
-        kubernetesDeploy configs: "applications/${appName}/k8s/*.yaml", kubeconfigId: 'kenzan_kubeconfig'
+    stage("Deploy") {
+        // Sử dụng kubectl apply để deploy thay vì kubernetesDeploy nếu cần thiết
+        sh "kubectl apply -f applications/${appName}/k8s/"
+    }
 }
