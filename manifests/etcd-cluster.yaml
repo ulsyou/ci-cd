@@ -5,13 +5,13 @@ metadata:
   namespace: default
 spec:
   size: 3
-  version: "v3.5.12"
+  version: "v3.5.15"  
   etcd:
-    image: quay.io/coreos/etcd:v3.5.12
+    image: quay.io/coreos/etcd:v3.5.15 
     resources:
       requests:
-        memory: "256Mi"
-        cpu: "250m"
+        memory: "512Mi"  
+        cpu: "500m"      
     volumeClaimTemplates:
       - metadata:
           name: etcd-data
@@ -19,4 +19,4 @@ spec:
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
-              storage: "1Gi"
+              storage: "2Gi" 
