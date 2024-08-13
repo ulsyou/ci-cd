@@ -12,9 +12,7 @@ spec:
     app: monitor-scale
     tier: monitor-scale
   type: NodePort
-
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -35,6 +33,7 @@ spec:
         app: monitor-scale
         tier: monitor-scale
     spec:
+      serviceAccountName: monitor-scale-sa
       containers:
       - image: 192.168.49.2:30400/monitor-scale:$BUILD_TAG
         name: monitor-scale
@@ -42,15 +41,16 @@ spec:
         ports:
         - containerPort: 3001
           name: monitor-scale
+        env:
+        - name: KUBERNETES_API_PROXY
+          value: "http://localhost:2345"
       - image: zappi/kubectl:latest
         name: kubectl-api
         args: ["proxy", "-p", "2345", "--address=0.0.0.0"]
         ports:
         - containerPort: 2345
-          name: kubectl-api     
-
+          name: kubectl-api
 ---
-
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
