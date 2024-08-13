@@ -44,7 +44,7 @@ spec:
           name: monitor-scale
       - image: zappi/kubectl:latest
         name: kubectl-api
-        args: ["proxy","-p","2345"]
+        args: ["proxy", "-p", "2345", "--address=0.0.0.0"]
         ports:
         - containerPort: 2345
           name: kubectl-api     
