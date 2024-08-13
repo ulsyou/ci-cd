@@ -6,7 +6,7 @@ node {
 
     sh "git rev-parse --short HEAD > commit-id"
 
-    tag = readFile('commit-id').replace("\n", "").replace("\r", "")
+    tag = readFile('commit-id').trim()
     appName = "puzzle"
     registryHost = "192.168.49.2:30400/"
     imageName = "${registryHost}${appName}:${tag}"
@@ -20,8 +20,8 @@ node {
         sh "docker push ${imageName}"
     }
     stage("Deploy") {
-    sh """
-        sed 's#192.168.49.2:30400/puzzle:$BUILD_TAG#192.168.49.2:30400/puzzle:${tag}#' applications/puzzle/k8s/deployment.yaml | kubectl apply -f -
-    """
+        sh """
+            sed 's#192.168.49.2:30400/puzzle:\$BUILD_TAG#${imageName}#' applications/puzzle/k8s/deployment.yaml | kubectl apply -f -
+        """
     }
 }
