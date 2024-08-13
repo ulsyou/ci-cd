@@ -13,15 +13,15 @@ node {
     env.BUILDIMG=imageName
     env.BUILD_TAG=tag
 
-    stage "Build"
-    
+    stage("Build") {
         sh "docker build -t ${imageName} applications/kr8sswordz-pages"
+    }
     
-    stage "Push"
-
+    stage("Push") {
         sh "docker push ${imageName}"
+    }
 
-    stage "Deploy"
-
-        kubernetesDeploy configs: "applications/kr8sswordz-pages/k8s/*.yaml", kubeconfigId: 'kenzan_kubeconfig'
+    stage("Deploy") {
+        sh "kubectl apply -f applications/kr8sswordz-pages/k8s/"
+    }
 }
