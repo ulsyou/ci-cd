@@ -27,8 +27,8 @@ app.post('/scale', function (req, res) {
   console.log('Count requested is: %s', scale);
   var url = "http://localhost:2345/apis/autoscaling/v1/namespaces/default/deployments/puzzle";
   var patchBody = {
-    spec: {
-      replicas: "scale"
+    "spec": {
+      "replicas": "Scale"
     }
   };
 
