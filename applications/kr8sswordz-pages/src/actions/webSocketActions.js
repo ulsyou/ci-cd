@@ -5,7 +5,6 @@ import * as types from './actionTypes';
 const baseUrl = `http://monitor-scale.${constants.minikubeIp}.xip.io`;
 const socket = io(baseUrl);
 
-
 export function getPods() {
   return dispatch => {
     return fetch(`${baseUrl}/pods`)
@@ -100,24 +99,25 @@ export function scale (data) {
     headers.append('Content-Type', 'application/json');
 
     return fetch(`${baseUrl}/scale`, {
-  method: 'POST',
-  headers,
-  body: submission
-})
-.then(resp => {
-  if (!resp.ok) {
-    return resp.text().then(text => {
-      console.error(`Error response text: ${text}`);
-      throw new Error(`HTTP error! status: ${resp.status}`);
+      method: 'POST',
+      headers,
+      body: submission
+    })
+    .then(resp => {
+      if (!resp.ok) {
+        return resp.text().then(text => {
+          console.error(`Error response text: ${text}`);
+          throw new Error(`HTTP error! status: ${resp.status}`);
+        });
+      }
+      return resp.json();
+    })
+    .catch(err => {
+      console.error('Error scaling pods:', err);
+      throw err;
     });
-  }
-  return resp.json();
-})
-.catch(err => {
-  console.error('Error scaling pods:', err);
-  throw err;
-});
-
+  };
+} // Đóng ngoặc ở đây để hoàn thành hàm `scale`
 
 export function submitConcurrentRequests (count) {
   return dispatch => {
