@@ -22,12 +22,12 @@ app.use(bodyParser.json());
 etcd = new Etcd("http://example-etcd-cluster-client-service:2379");
 etcd.mkdirSync('pod-list');
 
-app.post('/scale', async (req, res) => {
-  const scale = parseInt(req.body.count, 10);
-  console.log('Count requested is:', scale);
+app.post('/scale', function(req, res) {
+  var scale = parseInt(req.body.count, 10);
+  console.log('Count requested is: ' + scale);
 
-  const url = "http://localhost:2345/apis/apps/v1/namespaces/default/deployments/puzzle/scale";
-  const putBody = {
+  var url = "http://localhost:2345/apis/apps/v1/namespaces/default/deployments/puzzle/scale";
+  var putBody = {
     kind: "Scale",
     apiVersion: "autoscaling/v1",
     metadata: { 
@@ -39,22 +39,19 @@ app.post('/scale', async (req, res) => {
     }
   };
 
-  try {
-    const response = await axios.put(url, putBody, {
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    console.log('Response:', JSON.stringify(response.data));
-    res.status(response.status).json(response.data);
-  } catch (error) {
-    console.error('Failed to scale:', error.message);
-    res.status(error.response?.status || 500).json({
-      error: 'Failed to scale',
-      message: error.message
-    });
-  }
+  request({
+    url: url,
+    method: 'PUT',
+    json: putBody
+  }, function(err, httpResponse, body) {
+    if (err) {
+      console.error('Failed to scale:', err);
+      return res.status(500).json({ error: 'Failed to scale', message: err.message });
+    }
+    console.log('Response: ' + JSON.stringify(httpResponse));
+    res.status(httpResponse.statusCode).json(body);
+  });
 });
-
 
 app.post('/loadtest/concurrent', function (req, res) {
   var count = req.body.count;
