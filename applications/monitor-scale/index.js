@@ -28,7 +28,7 @@ app.post('/scale', function (req, res) {
   var url = "http://localhost:2345/apis/apps/v1/namespaces/default/deployments/puzzle/scale";
   var putBody = {
     kind:"Scale",
-    apiVersion:"apps/v1",
+    apiVersion:"autoscaling/v1",
     metadata: { 
       name:"puzzle",
       namespace:"default"
@@ -38,7 +38,7 @@ app.post('/scale', function (req, res) {
     },
     status:{}
   };
-  // putBody.spec.replicas = scale;
+  putBody.spec.replicas = scale;
 
   request({ url: url, method: 'PUT', json: putBody}, function (err, httpResponse, body) {
     if (err) {
