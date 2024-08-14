@@ -9,7 +9,7 @@
 # kubectl exec -it example-etcd-cluster-0000 chmod +x mkdir.sh
 
 
-kubectl exec -it example-etcd-cluster-0000 echo "#!/usr/bin/env bash\n\nexport ETCDCTL_ENDPOINT='http://etcd-service:2379'\nectdctl mkdir pod-list" > /mkd.sh
+kubectl exec -it example-etcd-cluster-0000 echo "#!/usr/bin/env bash\n\nexport ETCDCTL_ENDPOINT='http://example-etcd-cluster-client-service:2379'\nectdctl mkdir pod-list" > /mkd.sh
 kubectl exec -it example-etcd-cluster-0000 chmod 0777 /mkd.sh
 
 kubectl exec -it example-etcd-cluster-0000 cat /mkd.sh
