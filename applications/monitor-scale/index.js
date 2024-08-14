@@ -22,44 +22,37 @@ app.use(bodyParser.json());
 etcd = new Etcd("http://example-etcd-cluster-client-service:2379");
 etcd.mkdirSync('pod-list');
 
-app.post('/scale', function (req, res) {
-  var scale = req.body.count;
-  console.log('Count requested is: %s', scale);
-  var url = "http://localhost:2345/apis/apps/v1/namespaces/default/deployments/puzzle/scale";
-  var putBody = {
-    kind:"Scale",
-    apiVersion:"autoscaling/v1",
+app.post('/scale', async (req, res) => {
+  const scale = parseInt(req.body.count, 10);
+  console.log('Count requested is:', scale);
+
+  const url = "http://localhost:2345/apis/apps/v1/namespaces/default/deployments/puzzle/scale";
+  const putBody = {
+    kind: "Scale",
+    apiVersion: "autoscaling/v1",
     metadata: { 
-      name:"puzzle",
-      namespace:"default"
+      name: "puzzle",
+      namespace: "default"
     },
     spec: {
-      replicas:1
-    },
-    status:{}
+      replicas: scale
+    }
   };
-  putBody.spec.replicas = scale;
 
-  request({ url: url, method: 'PUT', json: {
-    "kind":"Scale",
-    "apiVersion":"autoscaling/v1",
-    "metadata": { 
-      "name":"puzzle",
-      "namespace":"default"
-    },
-    "spec": {
-      "replicas":"1"
-    },
-    "status":{}
-    }
-}, function (err, httpResponse, body) {
-    if (err) {
-      console.error('Failed to scale:', err);
-      next(err);
-    }
-    console.log('Response: ' + JSON.stringify(httpResponse));
-    res.status(httpResponse.statusCode).json(body);
-  });
+  try {
+    const response = await axios.put(url, putBody, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    console.log('Response:', JSON.stringify(response.data));
+    res.status(response.status).json(response.data);
+  } catch (error) {
+    console.error('Failed to scale:', error.message);
+    res.status(error.response?.status || 500).json({
+      error: 'Failed to scale',
+      message: error.message
+    });
+  }
 });
 
 
