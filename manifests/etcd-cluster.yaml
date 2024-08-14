@@ -1,22 +1,12 @@
-apiVersion: etcd.database.coreos.com/v1beta2
-kind: EtcdCluster
+apiVersion: "etcd.database.coreos.com/v1beta2"
+kind: "EtcdCluster"
 metadata:
-  name: test
-  namespace: default
+  name: "example-etcd-cluster"
+  ## Adding this annotation make this cluster managed by clusterwide operators
+  ## namespaced operators ignore it
+  # annotations:
+  #   etcd.database.coreos.com/scope: clusterwide
 spec:
   size: 3
-  version: "v3.5.15"  
-  etcd:
-    image: quay.io/coreos/etcd:v3.5.15 
-    resources:
-      requests:
-        memory: "512Mi"  
-        cpu: "500m"      
-    volumeClaimTemplates:
-      - metadata:
-          name: etcd-data
-        spec:
-          accessModes: ["ReadWriteOnce"]
-          resources:
-            requests:
-              storage: "2Gi" 
+  version: "3.5.15"
+
