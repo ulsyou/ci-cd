@@ -37,7 +37,7 @@ app.post('/scale', function (req, res) {
     method: 'PATCH',
     json: patchBody,
     headers: {
-      'Content-Type': 'application/strategic-merge-patch+json'
+      'Content-Type': 'application/json'
     }
   }, function (err, httpResponse, body) {
     if (err) {
