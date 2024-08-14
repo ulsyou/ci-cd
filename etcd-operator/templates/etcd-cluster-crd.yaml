@@ -1,6 +1,6 @@
 {{- if .Values.customResources.createEtcdClusterCRD }}
 ---
-apiVersion: "etcd.database.coreos.com/v1beta2"
+apiVersion: "etcd.database.coreos.com/v1"
 kind: "EtcdCluster"
 metadata:
   name: {{ .Values.etcdCluster.name }}
