@@ -76,9 +76,9 @@ metadata:
   namespace: default
   name: scale-deployment-role
 rules:
-- apiGroups: ["apps"]
+- apiGroups: ["autoscaling"]
   resources: ["deployments/scale"]
-  verbs: ["get", "update"]
+  verbs: ["get", "update", "patch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
