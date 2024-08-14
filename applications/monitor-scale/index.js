@@ -38,7 +38,7 @@ app.post('/scale', function (req, res) {
     },
     status:{}
   };
-  putBody.spec.replicas = scale;
+  // putBody.spec.replicas = scale;
 
   request({ url: url, method: 'PUT', json: putBody}, function (err, httpResponse, body) {
     if (err) {
