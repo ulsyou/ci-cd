@@ -32,7 +32,14 @@ app.post('/scale', function (req, res) {
     }
   };
 
-  request({ url: url, method: 'PATCH', json: patchBody}, function (err, httpResponse, body) {
+  request({
+    url: url,
+    method: 'PATCH',
+    json: patchBody,
+    headers: {
+      'Content-Type': 'application/strategic-merge-patch+json'
+    }
+  }, function (err, httpResponse, body) {
     if (err) {
       console.error('Failed to scale:', err);
       return res.status(500).send('Failed to scale');
@@ -41,6 +48,7 @@ app.post('/scale', function (req, res) {
     res.status(httpResponse.statusCode).json(body);
   });
 });
+
 
 app.post('/loadtest/concurrent', function (req, res) {
   var count = req.body.count;
