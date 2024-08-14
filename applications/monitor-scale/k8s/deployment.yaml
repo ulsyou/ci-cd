@@ -69,3 +69,27 @@ spec:
             name: monitor-scale
             port:
               number: 3001
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: scale-deployment-role
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments/scale"]
+  verbs: ["get", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: scale-deployment-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: monitor-scale
+  namespace: default
+roleRef:
+  kind: Role
+  name: scale-deployment-role
+  apiGroup: rbac.authorization.k8s.io
