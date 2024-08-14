@@ -25,7 +25,7 @@ etcd.mkdirSync('pod-list');
 app.post('/scale', function (req, res) {
   var scale = req.body.count;
   console.log('Count requested is: %s', scale);
-  var url = "http://192.168.49.2:2345/apis/apps/v1/namespaces/default/deployments/puzzle/scale";
+  var url = "http://localhost:2345/apis/apps/v1/namespaces/default/deployments/puzzle/scale";
   var putBody = {
     kind: "Scale",
     apiVersion: "apps/v1",
