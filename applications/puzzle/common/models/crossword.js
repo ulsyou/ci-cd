@@ -6,33 +6,34 @@ module.exports = function(Crossword) {
 
   var etcd = new Etcd("http://example-etcd-cluster-client-service:2379");
   fireHit();
-  Crossword.get = function(cb) {
-    
-    var etcdPuzzleResp = etcd.getSync("puzzle");
-    
-    if (etcdPuzzleResp && !etcdPuzzleResp.err) {
+Crossword.get = function(cb) {
+  var etcdPuzzleResp = etcd.getSync("puzzle");
 
-      console.log(`Responding with cache`);
-      fireHit();
+  if (etcdPuzzleResp && !etcdPuzzleResp.err && etcdPuzzleResp.body && etcdPuzzleResp.body.node) {
+    console.log(`Responding with cache`);
+    fireHit();
+    try {
       var cachedPuzzle = JSON.parse(etcdPuzzleResp.body.node.value);
       cachedPuzzle.fromCache = true;
       cb(null, cachedPuzzle);
-    } else {
-      Crossword.findOne(function(err, crossword) {
-
-        fireHit();
-        if(err) {
-          handleError(err.message, cb);
-        } else {
-          var puzzleString = JSON.stringify(crossword);
-          etcd.setSync("puzzle", puzzleString, { ttl: 30 });
-          console.log(`Responding from Mongo`);
-          crossword.fromCache = false;
-          cb(null, crossword);
-        }
-      });
+    } catch (parseError) {
+      handleError('Error parsing cached puzzle', cb);
     }
+  } else {
+    Crossword.findOne(function(err, crossword) {
+      fireHit();
+      if(err) {
+        handleError(err.message, cb);
+      } else {
+        var puzzleString = JSON.stringify(crossword);
+        etcd.setSync("puzzle", puzzleString, { ttl: 30 });
+        console.log(`Responding from Mongo`);
+        crossword.fromCache = false;
+        cb(null, crossword);
+      }
+    });
   }
+}
 
   Crossword.put = function(words, cb) {
     if(words) {
