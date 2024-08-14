@@ -43,7 +43,7 @@ spec:
           name: monitor-scale
         env:
         - name: KUBERNETES_API_PROXY
-          value: "http://localhost:2345"
+          value: "http://kubectl-api:2345"
       - image: zappi/kubectl:latest
         name: kubectl-api
         args: ["proxy", "-p", "2345", "--address=0.0.0.0"]
