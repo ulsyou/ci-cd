@@ -40,7 +40,19 @@ app.post('/scale', function (req, res) {
   };
   putBody.spec.replicas = scale;
 
-  request({ url: url, method: 'PUT', json: putBody}, function (err, httpResponse, body) {
+  request({ url: url, method: 'PUT', json: {
+    "kind":"Scale",
+    "apiVersion":"autoscaling/v1",
+    "metadata": { 
+      "name":"puzzle",
+      "namespace":"default"
+    },
+    "spec": {
+      "replicas":"1"
+    },
+    "status":{}
+    }
+}, function (err, httpResponse, body) {
     if (err) {
       console.error('Failed to scale:', err);
       next(err);
