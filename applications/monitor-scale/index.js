@@ -25,29 +25,31 @@ etcd.mkdirSync('pod-list');
 app.post('/scale', function (req, res) {
   var scale = req.body.count;
   console.log('Count requested is: %s', scale);
-  var url = "http://localhost:2345/apis/autoscaling/v1/namespaces/default/deployments/puzzle";
-  var patchBody = {
-    "spec": {
-      "replicas": "Scale"
-    }
+  var url = "http://localhost:2345/apis/apps/v1/namespaces/default/deployments/puzzle/scale";
+  var putBody = {
+    kind:"Scale",
+    apiVersion:"apps/v1",
+    metadata: { 
+      name:"puzzle",
+      namespace:"default"
+    },
+    spec: {
+      replicas:1
+    },
+    status:{}
   };
+  putBody.spec.replicas = scale;
 
-  request({
-    url: url,
-    method: 'PATCH',
-    json: patchBody,
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }, function (err, httpResponse, body) {
+  request({ url: url, method: 'PUT', json: putBody}, function (err, httpResponse, body) {
     if (err) {
       console.error('Failed to scale:', err);
-      return res.status(500).send('Failed to scale');
+      next(err);
     }
     console.log('Response: ' + JSON.stringify(httpResponse));
     res.status(httpResponse.statusCode).json(body);
   });
 });
+
 
 app.post('/loadtest/concurrent', function (req, res) {
   var count = req.body.count;
