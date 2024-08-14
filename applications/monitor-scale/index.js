@@ -49,7 +49,6 @@ app.post('/scale', function (req, res) {
   });
 });
 
-
 app.post('/loadtest/concurrent', function (req, res) {
   var count = req.body.count;
   console.log('Count requested is: %s', count);
